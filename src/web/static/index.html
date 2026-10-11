@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HGameInject</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">HG</span>
+      <div>
+        <h1>HGameInject</h1>
+        <p id="brand-sub">等待选择目标进程</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span id="attach-chip" class="chip chip-idle">未注入</span>
+      <button id="detach-button" class="button ghost" type="button" hidden>断开</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <h2>目标进程</h2>
+        <button id="scan-button" class="button ghost compact" type="button">扫描</button>
+      </div>
+      <input id="process-filter" class="input" type="text" placeholder="按进程名或窗口标题过滤">
+      <ul id="process-list" class="process-list"></ul>
+      <p id="process-hint" class="hint">正在扫描可见窗口进程…</p>
+    </aside>
+
+    <section class="content">
+      <div id="screen-idle" class="screen">
+        <h2>选择要加载的进程</h2>
+        <p>左侧列出当前可见窗口进程。左键点击任意一项即可注入并加载模块系统。</p>
+        <p class="muted">注入需要目标进程与宿主架构一致，并以同等权限运行。</p>
+      </div>
+
+      <div id="screen-attaching" class="screen" hidden>
+        <div class="spinner"></div>
+        <h2 id="attaching-title">正在加载</h2>
+        <p id="attaching-message" class="muted"></p>
+      </div>
+
+      <div id="screen-modules" class="screen" hidden>
+        <div class="target-card">
+          <div>
+            <h2 id="target-name">-</h2>
+            <p id="target-path" class="muted"></p>
+          </div>
+          <div class="target-meta">
+            <span id="target-pid" class="chip"></span>
+            <span id="module-count" class="chip"></span>
+          </div>
+        </div>
+        <p id="session-message" class="notice" hidden></p>
+        <div id="module-groups" class="module-groups"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" hidden></div>
+  <script src="/app.js"></script>
+</body>
+</html>
