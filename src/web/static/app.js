@@ -23,6 +23,7 @@ const elements = {
   attachingMessage: document.getElementById("attaching-message"),
   targetName: document.getElementById("target-name"),
   targetPath: document.getElementById("target-path"),
+  targetRuntime: document.getElementById("target-runtime"),
   targetPid: document.getElementById("target-pid"),
   moduleCount: document.getElementById("module-count"),
   sessionMessage: document.getElementById("session-message"),
@@ -155,7 +156,8 @@ function renderHeader(view) {
   if (view.attached) {
     elements.attachChip.textContent = `已注入 PID ${view.processId}`;
     elements.attachChip.className = "chip chip-live";
-    elements.brandSub.textContent = `${view.processName} · ${view.modules.length} 个模块`;
+    const runtime = view.runtime ? ` · ${view.runtime}` : "";
+    elements.brandSub.textContent = `${view.processName}${runtime} · ${view.modules.length} 个模块`;
     elements.detachButton.hidden = false;
   } else if (view.attaching) {
     elements.attachChip.textContent = "注入中";
@@ -180,6 +182,8 @@ function renderScreen() {
   }
   elements.targetName.textContent = state.view.processName || `PID ${state.view.processId}`;
   elements.targetPath.textContent = state.view.processPath || "";
+  elements.targetRuntime.textContent = state.view.runtime || "";
+  elements.targetRuntime.hidden = !state.view.runtime;
   elements.targetPid.textContent = `PID ${state.view.processId}`;
   elements.moduleCount.textContent = `${state.view.modules.length} 个模块`;
   if (state.view.message) {

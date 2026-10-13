@@ -101,6 +101,10 @@ p {
   white-space: nowrap;
 }
 
+.chip[hidden] {
+  display: none;
+}
+
 .chip-live {
   border-color: rgba(63, 185, 80, 0.5);
   color: var(--ok);

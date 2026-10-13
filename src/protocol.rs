@@ -35,6 +35,8 @@ pub enum Response {
 pub struct SnapshotPayload {
     pub processId: u32,
     pub processName: String,
+    #[serde(default)]
+    pub runtime: String,
     pub modules: Vec<ModuleSnapshot>,
 }
 

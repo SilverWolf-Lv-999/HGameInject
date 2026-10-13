@@ -38,6 +38,7 @@ pub struct SessionView {
     pub attaching: bool,
     pub processId: u32,
     pub processName: String,
+    pub runtime: String,
     pub processPath: String,
     pub message: String,
     pub modules: Vec<crate::protocol::ModuleSnapshot>,
@@ -110,6 +111,7 @@ struct SessionState {
     attaching: bool,
     processId: u32,
     processName: String,
+    runtime: String,
     processPath: String,
     message: String,
     snapshot: Option<SnapshotPayload>,
@@ -125,6 +127,7 @@ impl Session {
                 attaching: false,
                 processId: 0,
                 processName: String::new(),
+                runtime: String::new(),
                 processPath: String::new(),
                 message: "select a target process".to_owned(),
                 snapshot: None,
@@ -163,6 +166,7 @@ impl Session {
             attaching: state.attaching,
             processId: state.processId,
             processName: state.processName.clone(),
+            runtime: state.runtime.clone(),
             processPath: state.processPath.clone(),
             message: state.message.clone(),
             modules,
@@ -200,6 +204,7 @@ impl Session {
                 state.attached = true;
                 state.processId = snapshot.processId;
                 state.processName = snapshot.processName.clone();
+                state.runtime = snapshot.runtime.clone();
                 state.processPath = query_path(process_id).unwrap_or_default();
                 state.message = format!(
                     "attached to {} ({})",
@@ -210,6 +215,7 @@ impl Session {
             Err(error) => {
                 state.attached = false;
                 state.message = error;
+                state.runtime.clear();
                 state.snapshot = None;
                 state.service = None;
             }
@@ -297,6 +303,7 @@ impl Session {
                 let mut state = self.state.lock();
                 state.attached = true;
                 state.processId = snapshot.processId;
+                state.runtime = snapshot.runtime.clone();
                 state.snapshot = Some(snapshot);
                 state.message.clear();
             }
@@ -321,6 +328,7 @@ impl Session {
         state.attaching = false;
         state.processId = 0;
         state.processName.clear();
+        state.runtime.clear();
         state.processPath.clear();
         state.snapshot = None;
         state.service = None;

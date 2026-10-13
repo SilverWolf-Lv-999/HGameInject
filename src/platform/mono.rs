@@ -1,9 +1,10 @@
 use std::ffi::{CStr, CString, c_char, c_void};
 
 use windows_sys::Win32::Foundation::HMODULE;
-use windows_sys::Win32::System::LibraryLoader::{GetModuleHandleW, GetProcAddress};
+use windows_sys::Win32::System::LibraryLoader::GetProcAddress;
 
 use crate::platform::memory::MemoryUtility;
+use crate::platform::runtime::{MONO_MODULES, module_handle};
 
 type MonoGetRootDomain = unsafe extern "system" fn() -> usize;
 type MonoThreadAttach = unsafe extern "system" fn(usize) -> usize;
@@ -21,12 +22,6 @@ type MonoStringToUtf8 = unsafe extern "system" fn(usize) -> *mut c_char;
 type MonoFree = unsafe extern "system" fn(*mut c_void);
 type MonoArrayLength = unsafe extern "system" fn(usize) -> usize;
 
-const MONO_MODULES: &[&str] = &[
-    "mono-2.0-bdwgc.dll",
-    "mono-2.0-sgen.dll",
-    "mono-2.0.dll",
-    "mono.dll",
-];
 const ARRAY_HEADER: usize = 32;
 
 #[derive(Clone, Copy)]
@@ -63,7 +58,7 @@ impl MonoHandler {
     pub fn create() -> Result<MonoHandler, String> {
         let module = MONO_MODULES
             .iter()
-            .find_map(|name| moduleHandle(name))
+            .find_map(|name| module_handle(name))
             .ok_or_else(|| "mono runtime not loaded".to_owned())?;
         let getRootDomain: MonoGetRootDomain =
             unsafe { std::mem::transmute(resolve(module, "mono_get_root_domain")?) };
@@ -229,8 +224,3 @@ fn resolve(module: HMODULE, name: &str) -> Result<usize, String> {
     }
 }
 
-fn moduleHandle(name: &str) -> Option<HMODULE> {
-    let wide: Vec<u16> = name.encode_utf16().chain(std::iter::once(0)).collect();
-    let handle = unsafe { GetModuleHandleW(wide.as_ptr()) };
-    (!handle.is_null()).then_some(handle)
-}

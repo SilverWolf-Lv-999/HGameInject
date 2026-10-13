@@ -155,6 +155,7 @@ fn snapshot(host: &Host) -> SnapshotPayload {
             .ok()
             .map(|path| crate::utility::windows::process_name(&path))
             .unwrap_or_else(|| format!("pid-{}", client.process_id())),
+        runtime: crate::platform::host_runtime().name().to_owned(),
         modules,
     }
 }
